@@ -8,8 +8,8 @@ group = "me.croabeast"
 version = "1.0"
 
 allprojects {
-    group = "me.croabeast"
-    version = "0.1.0-SNAPSHOT"
+    group = "me.croabeast.expr4j"
+    version = "1.0"
 
     repositories {
         mavenCentral()

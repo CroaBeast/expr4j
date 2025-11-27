@@ -197,5 +197,5 @@ jobs:
 
           cd maven-repo
           git add .
-          git commit -m "Deploy modules ${VER}" || echo "No changes to commit"
+          git commit -m "Deploy expr4j ${VER}" || echo "No changes to commit"
           git push
