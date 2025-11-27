@@ -1,0 +1,8 @@
+plugins {
+    id("java-library")
+    id("io.freefair.lombok")
+}
+
+dependencies {
+    compileOnly(project(":core"))
+}
