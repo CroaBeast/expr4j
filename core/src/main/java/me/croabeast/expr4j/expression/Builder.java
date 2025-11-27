@@ -8,23 +8,68 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Base class responsible for tokenizing, parsing and constructing
+ * {@link Expression} instances for a specific numeric domain. Concrete
+ * builders set up dictionaries and codecs that describe how literals and
+ * operations should behave.
+ *
+ * <p>Extending this class lets you register your own operators and functions
+ * alongside custom literal parsing rules. Builders reuse the same dictionary
+ * between builds unless {@link #reset()} is invoked, making it easy to prepare
+ * reusable configurations for your application or plugin.</p>
+ *
+ * @param <T> computation type managed by the builder
+ */
 @SuppressWarnings("unchecked")
 @Getter
 public abstract class Builder<T> {
 
+    /**
+     * Registry of available operators, functions, and constants used during
+     * tokenization and evaluation. Builders refresh this instance when
+     * {@link #reset()} is called.
+     */
     private Dictionary<T> dictionary = new Dictionary<>();
+
+    /**
+     * Codec describing how to parse and render operands. Swapping this value
+     * allows new numeric types to share the same expression infrastructure.
+     */
     private final Codec<T> codec;
+
+    /**
+     * Expression produced by the latest call to {@link #build(String)}. Stored
+     * so that helper methods can continue wiring nodes as the postfix notation
+     * is processed.
+     */
     private Expression<T> expression;
 
+    /**
+     * Creates a new builder and optionally initializes its dictionary.
+     *
+     * @param codec       codec used to parse and print operand values
+     * @param initialize  whether the builder should pre-populate the
+     *                    dictionary upon construction
+     */
     public Builder(Codec<T> codec, boolean initialize) {
         this.codec = codec;
         if (initialize) initialize();
     }
 
+    /**
+     * Convenience constructor that always initializes the builder.
+     *
+     * @param codec codec used to parse and print operand values
+     */
     public Builder(Codec<T> codec) {
         this(codec, true);
     }
 
+    /**
+     * Clears the underlying dictionary so new operators or functions can be
+     * registered from scratch.
+     */
     public void reset() {
         dictionary = new Dictionary<>();
     }
@@ -79,6 +124,14 @@ public abstract class Builder<T> {
 
     protected abstract void initialize();
 
+    /**
+     * Parses the supplied textual expression into an executable
+     * {@link Expression} tree.
+     *
+     * @param expression input expression in infix notation
+     * @return compiled expression ready to evaluate
+     * @throws Expr4jException if tokenization or parsing fails
+     */
     @NotNull
     public Expression<T> build(String expression) throws Expr4jException {
         try {

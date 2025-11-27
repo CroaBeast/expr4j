@@ -8,8 +8,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * {@link Builder} implementation that targets {@link Complex} numbers,
+ * exposing a wide range of trigonometric and logarithmic utilities.
+ */
 public class ComplexBuilder extends Builder<Complex> {
 
+    /**
+     * Creates a builder with optional eager initialization.
+     *
+     * @param initialize whether to register the default operators and
+     *                   functions immediately
+     */
     public ComplexBuilder(boolean initialize) {
         super(new Codec<Complex>() {
             @NotNull
@@ -28,6 +38,9 @@ public class ComplexBuilder extends Builder<Complex> {
         }, initialize);
     }
 
+    /**
+     * Creates and initializes a builder using the default dictionary entries.
+     */
     public ComplexBuilder() {
         this(true);
     }

@@ -9,8 +9,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * {@link Builder} implementation that operates on {@link Double} values. It
+ * wires common mathematical operators and functions using Java's standard math
+ * library.
+ */
 public class DoubleBuilder extends Builder<Double> {
 
+    /**
+     * Creates a builder with optional eager initialization.
+     *
+     * @param initialize whether default operators, functions and constants
+     *                   should be registered immediately
+     */
     public DoubleBuilder(boolean initialize) {
         super(new Codec<Double>() {
             @NotNull
@@ -32,6 +43,9 @@ public class DoubleBuilder extends Builder<Double> {
         }, initialize);
     }
 
+    /**
+     * Creates and initializes a builder with the default dictionary.
+     */
     public DoubleBuilder() {
         this(true);
     }

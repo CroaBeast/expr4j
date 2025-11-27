@@ -12,15 +12,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Immutable representation of a parsed expression tree. Instances can be
+ * evaluated multiple times with different variable bindings and are responsible
+ * for orchestrating token execution.
+ *
+ * <p>The expression keeps a reference to its originating {@link Dictionary} and
+ * {@link Codec} so that downstream code can inspect how values are formatted or
+ * determine which constants were registered at build time. This design makes it
+ * easy to serialize or log expressions with full contextual information.</p>
+ *
+ * @param <T> result type produced by the expression
+ */
 @RequiredArgsConstructor
 @Getter
 @SuppressWarnings("unchecked")
 public class Expression<T> {
 
     @Setter
+    /**
+     * Root node of the parsed abstract syntax tree. Set during the build
+     * process and later reused for evaluation and pretty-printing.
+     */
     private Node root;
 
+    /**
+     * Registry of functions, operators, and constants used to evaluate the
+     * expression. Exposed for tooling that wants to enumerate available
+     * symbols or reconstruct documentation at runtime.
+     */
     private final Dictionary<T> dictionary;
+
+    /**
+     * Codec that produced the operands. Builders can reuse it to present
+     * results in a human-friendly way or to understand which literal patterns
+     * were allowed when the expression was parsed.
+     */
     private final Codec<T> codec;
 
     protected Operand<T> evaluate(Node node, Map<String, T> variables) {
@@ -69,6 +96,12 @@ public class Expression<T> {
         }
     }
 
+    /**
+     * Evaluates the expression using the provided variable assignments.
+     *
+     * @param variables mapping of variable names to values
+     * @return computed result of the expression
+     */
     @NotNull
     public T evaluate(Map<String, T> variables) {
         if (root == null)
@@ -81,6 +114,12 @@ public class Expression<T> {
         return evaluate(root, map).getValue();
     }
 
+    /**
+     * Evaluates the expression without external variables, relying solely on
+     * constants embedded in the dictionary.
+     *
+     * @return computed result
+     */
     @NotNull
     public T evaluate() {
         return evaluate(new HashMap<>());
@@ -120,7 +159,7 @@ public class Expression<T> {
                 Token leftToken = left.getToken();
 
                 Node right = children.get(1);
-                Token rightToken = left.getToken();
+                Token rightToken = right.getToken();
 
                 if (leftToken instanceof Operator) {
                     Operator<T> leftOperator = (Operator<T>) leftToken;
@@ -173,6 +212,11 @@ public class Expression<T> {
                 label;
     }
 
+    /**
+     * Returns the expression rebuilt as an infix string.
+     *
+     * @return human-readable representation of the expression
+     */
     @Override
     public String toString() {
         return toString(root);

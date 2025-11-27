@@ -15,12 +15,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * {@link Builder} implementation that uses {@link BigDecimal} to offer
+ * high-precision arithmetic backed by {@link BigDecimalMath} helpers.
+ */
 public class BigDecimalBuilder extends Builder<BigDecimal> {
 
+    /**
+     * Default math context used when none is provided.
+     */
     public static final MathContext DEFAULT_CONTEXT = new MathContext(20, RoundingMode.HALF_UP);
 
     private MathContext mathContext;
 
+    /**
+     * Creates a builder configured with the provided {@link MathContext}.
+     *
+     * @param mathContext context controlling precision and rounding behavior
+     */
     public BigDecimalBuilder(MathContext mathContext) {
         super(new Codec<BigDecimal>() {
             @NotNull
@@ -41,18 +53,40 @@ public class BigDecimalBuilder extends Builder<BigDecimal> {
         setMathContext(mathContext);
     }
 
+    /**
+     * Creates a builder using a custom precision and rounding mode.
+     *
+     * @param precision  number of significant digits
+     * @param mode       rounding mode for operations
+     */
     public BigDecimalBuilder(int precision, RoundingMode mode) {
         this(new MathContext(precision, mode));
     }
 
+    /**
+     * Creates a builder with a custom precision and the default rounding mode
+     * of {@link RoundingMode#HALF_UP}.
+     *
+     * @param precision number of significant digits
+     */
     public BigDecimalBuilder(int precision) {
         this(precision, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Creates a builder using {@link #DEFAULT_CONTEXT}.
+     */
     public BigDecimalBuilder() {
         this(DEFAULT_CONTEXT);
     }
 
+    /**
+     * Reconfigures the builder with a new {@link MathContext}, resetting and
+     * reinitializing its dictionary.
+     *
+     * @param context math context to apply
+     * @return this builder for chaining
+     */
     public BigDecimalBuilder setMathContext(MathContext context) {
         reset();
         this.mathContext = context;
