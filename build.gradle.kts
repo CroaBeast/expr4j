@@ -4,9 +4,6 @@ plugins {
     id("com.gradleup.shadow") version "8.3.0"
 }
 
-group = "me.croabeast"
-version = "1.0"
-
 allprojects {
     group = "me.croabeast.expr4j"
     version = "1.0"
@@ -22,6 +19,7 @@ allprojects {
 subprojects {
     apply(plugin = "java-library")
     apply(plugin = "io.freefair.lombok")
+    apply(plugin = "com.gradleup.shadow")
 
     java {
         withSourcesJar()
@@ -55,8 +53,4 @@ subprojects {
         compileOnly("org.projectlombok:lombok:1.18.38")
         annotationProcessor("org.projectlombok:lombok:1.18.38")
     }
-}
-
-tasks.build {
-    dependsOn("shadowJar")
 }
