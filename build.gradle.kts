@@ -28,6 +28,20 @@ subprojects {
         withJavadocJar()
     }
 
+    tasks.withType<Javadoc>().configureEach {
+        isFailOnError = false
+
+        (options as StandardJavadocDocletOptions).apply {
+            addStringOption("Xdoclint:none", "-quiet")
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+            docEncoding = "UTF-8"
+
+            if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_1_9))
+                addBooleanOption("html5", true)
+        }
+    }
+
     tasks.withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
         sourceCompatibility = "1.8"
