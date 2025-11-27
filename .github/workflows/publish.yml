@@ -154,7 +154,7 @@ jobs:
               exit 1
             fi
 
-            BASE_DIR=maven-repo/me/croabeast/${ART}/${VER}
+            BASE_DIR=maven-repo/me/croabeast/expr4j/${ART}/${VER}
             mkdir -p "$BASE_DIR"
 
             cp "$MAIN_JAR" "$BASE_DIR/${ART}-${VER}.jar"
@@ -167,7 +167,7 @@ jobs:
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
             <modelVersion>4.0.0</modelVersion>
-            <groupId>me.croabeast</groupId>
+            <groupId>me.croabeast.expr4j</groupId>
             <artifactId>${ART}</artifactId>
             <version>${VER}</version>
             <packaging>jar</packaging>
@@ -176,12 +176,12 @@ jobs:
           </project>
           EOF
 
-            META_DIR=maven-repo/me/croabeast/${ART}
+            META_DIR=maven-repo/me/croabeast/expr4j/${ART}
             mkdir -p "$META_DIR"
             cat > "$META_DIR/maven-metadata.xml" << EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <metadata>
-            <groupId>me.croabeast</groupId>
+            <groupId>me.croabeast.expr4j</groupId>
             <artifactId>${ART}</artifactId>
             <versioning>
               <latest>${VER}</latest>

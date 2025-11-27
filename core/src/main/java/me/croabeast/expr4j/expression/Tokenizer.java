@@ -12,11 +12,37 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Breaks an expression string into a list of {@link Token} instances. The
+ * tokenizer leverages the dictionary to recognize operators and functions
+ * while also handling implicit multiplication and unary detection rules. It is
+ * designed to be reusable across numeric domains because all literal parsing
+ * is delegated to the provided {@link Codec}.
+ *
+ * <p>The tokenizer is intentionally stateful: it tracks whether the next token
+ * could be unary to support expressions such as <code>-3^2</code> or
+ * <code>!flag</code>. It also inserts implicit multiplication when adjacent
+ * symbols would otherwise be ambiguous (e.g., <code>2x</code> or
+ * <code>(a+b)(c+d)</code>).</p>
+ *
+ * @param <T> operand type produced by the tokenizer
+ */
 @RequiredArgsConstructor
 @Getter
 public class Tokenizer<T> {
 
+    /**
+     * Central registry that declares valid operators, functions, and
+     * constants. Every lookup performed by the tokenizer originates from this
+     * dictionary so that builders remain fully configurable.
+     */
     private final Dictionary<T> dictionary;
+
+    /**
+     * Codec responsible for recognizing literal patterns and converting them
+     * into operand instances. By swapping codecs you can teach the tokenizer to
+     * understand new numeric formats without rewriting tokenization rules.
+     */
     private final Codec<T> codec;
 
     @SuppressWarnings("unchecked")
@@ -37,6 +63,13 @@ public class Tokenizer<T> {
             list.add(dictionary.getOperator("*", null));
     }
 
+    /**
+     * Converts the raw expression string into a sequence of tokens.
+     *
+     * @param expression input expression in infix notation
+     * @return ordered tokens ready for parsing
+     * @throws Expr4jException if unknown symbols or malformed syntax are found
+     */
     @NotNull
     public List<Token> tokenize(String expression) {
         if (expression == null || expression.isEmpty() || expression.chars().allMatch(Character::isWhitespace))
