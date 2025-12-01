@@ -13,7 +13,5 @@ tasks.named("build") {
 
 tasks.named<ShadowJar>("shadowJar") {
     archiveClassifier.set("")
-    exclude(
-        "META-INF/**", "org/intellij/**", "org/jetbrains/**"
-    )
+    exclude("META-INF/**", "org/intellij/**", "org/jetbrains/**")
 }

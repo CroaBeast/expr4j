@@ -244,7 +244,7 @@ public abstract class Builder<T> {
                                 postfix.push(operatorStack.pop());
                             }
 
-                            validate(flag, "Unmatched number of parenthesis");
+                            if (flag) throw new Expr4jException("Unmatched closing parenthesis");
                             break;
                         }
 
@@ -330,7 +330,13 @@ public abstract class Builder<T> {
 
             while (!operatorStack.isEmpty()) {
                 Token temp = operatorStack.peek();
-                validate(temp instanceof Operator || temp instanceof Separator, "Unmatched number of parenthesis");
+
+                if (temp == Separator.OPEN_BRACKET)
+                    throw new Expr4jException("Unmatched opening parenthesis");
+
+                if (temp instanceof Separator)
+                    throw new Expr4jException("Dangling separator in expression");
+
                 postfix.push(operatorStack.pop());
             }
 
